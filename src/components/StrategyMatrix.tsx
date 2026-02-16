@@ -17,17 +17,11 @@ import {
 import { Project } from '@/lib/projects';
 import { ChevronDown, X } from 'lucide-react';
 import MatrixTooltip from '@/components/matrix/MatrixTooltip';
+import { QUADRANT_CONFIG } from '@/lib/constants';
 
 interface StrategyMatrixProps {
   projects: Project[];
 }
-
-const quadrantColors = {
-  'Quick Wins': { bg: '#dcfce7', text: '#15803d', dot: '#22c55e', border: '#86efac' },
-  'Big Bets': { bg: '#fef9c3', text: '#a16207', dot: '#eab308', border: '#fde047' },
-  'Time Sinks': { bg: '#fee2e2', text: '#b91c1c', dot: '#ef4444', border: '#fca5a5' },
-  'Fillers': { bg: '#f1f5f9', text: '#334155', dot: '#94a3b8', border: '#cbd5e1' },
-};
 
 export default function StrategyMatrix({ projects }: StrategyMatrixProps) {
   // Filters State
@@ -138,23 +132,21 @@ export default function StrategyMatrix({ projects }: StrategyMatrixProps) {
                     <div className="flex-1">
                         <label className="block text-xs font-semibold text-slate-600 mb-1.5">Quadrants</label>
                         <div className="flex flex-wrap gap-2">
-                            {Object.entries(quadrantColors).map(([name, colors]) => {
+                            {Object.entries(QUADRANT_CONFIG).map(([name, config]) => {
                                 const isActive = selectedQuadrants.includes(name);
+                                const Icon = config.icon;
                                 return (
                                     <button
                                         key={name}
                                         onClick={() => toggleQuadrant(name)}
-                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border-2 transition-all ${
+                                        className={cn(
+                                            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all uppercase tracking-wider",
                                             isActive
-                                                ? 'border-slate-900 shadow-md'
-                                                : 'border-slate-200 hover:border-slate-300'
-                                        }`}
-                                        style={{
-                                            backgroundColor: isActive ? colors.bg : 'white',
-                                            color: isActive ? colors.text : '#64748b'
-                                        }}
+                                                ? cn("shadow-md border-slate-900", config.bg, config.color)
+                                                : "border-slate-200 hover:border-slate-300 text-slate-400 bg-white"
+                                        )}
                                     >
-                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.dot }}></div>
+                                        <Icon size={14} strokeWidth={3} />
                                         {name}
                                     </button>
                                 );
@@ -188,10 +180,18 @@ export default function StrategyMatrix({ projects }: StrategyMatrixProps) {
                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                         
                         {/* Quadrant Backgrounds */}
-                        <ReferenceArea x1={0} x2={50} y1={50} y2={100} fill={quadrantColors['Quick Wins'].bg} fillOpacity={0.3} />
-                        <ReferenceArea x1={50} x2={100} y1={50} y2={100} fill={quadrantColors['Big Bets'].bg} fillOpacity={0.3} />
-                        <ReferenceArea x1={0} x2={50} y1={0} y2={50} fill={quadrantColors['Fillers'].bg} fillOpacity={0.3} />
-                        <ReferenceArea x1={50} x2={100} y1={0} y2={50} fill={quadrantColors['Time Sinks'].bg} fillOpacity={0.3} />
+                        <ReferenceArea x1={0} x2={50} y1={50} y2={100} fill={QUADRANT_CONFIG['Quick Wins'].bgHex} fillOpacity={0.4}>
+                            <Label value="QUICK WINS" position="insideTopLeft" fill="#64748b" style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '0.1em' }} offset={20} />
+                        </ReferenceArea>
+                        <ReferenceArea x1={50} x2={100} y1={50} y2={100} fill={QUADRANT_CONFIG['Big Bets'].bgHex} fillOpacity={0.4}>
+                            <Label value="BIG BETS" position="insideTopRight" fill="#64748b" style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '0.1em' }} offset={20} />
+                        </ReferenceArea>
+                        <ReferenceArea x1={0} x2={50} y1={0} y2={50} fill={QUADRANT_CONFIG['Fillers'].bgHex} fillOpacity={0.4}>
+                            <Label value="FILLERS" position="insideBottomLeft" fill="#94a3b8" style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '0.1em' }} offset={20} />
+                        </ReferenceArea>
+                        <ReferenceArea x1={50} x2={100} y1={0} y2={50} fill={QUADRANT_CONFIG['Time Sinks'].bgHex} fillOpacity={0.4}>
+                            <Label value="TIME SINKS" position="insideBottomRight" fill="#94a3b8" style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '0.1em' }} offset={20} />
+                        </ReferenceArea>
                         
                         {/* Center Lines */}
                         <ReferenceLine x={50} stroke="#94a3b8" strokeWidth={2} strokeDasharray="5 5" />
@@ -236,8 +236,8 @@ export default function StrategyMatrix({ projects }: StrategyMatrixProps) {
                             {filteredData.map((entry, index) => (
                                 <Cell 
                                     key={`cell-${index}`} 
-                                    fill={quadrantColors[entry.quadrant].dot}
-                                    stroke={quadrantColors[entry.quadrant].border}
+                                    fill={QUADRANT_CONFIG[entry.quadrant].dot}
+                                    stroke={QUADRANT_CONFIG[entry.quadrant].border}
                                     strokeWidth={2}
                                     r={8}
                                 />
@@ -249,3 +249,5 @@ export default function StrategyMatrix({ projects }: StrategyMatrixProps) {
         </div>
     );
 }
+
+import { cn } from '@/lib/utils';
