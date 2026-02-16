@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import { getProjects, Project } from '@/lib/projects';
+import { getProjects } from '@/lib/projects';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Users, Calendar, DollarSign, Target, ArrowLeft } from 'lucide-react';
+import { Users, Calendar, DollarSign, Target, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ProjectContent } from '@/components/ProjectContent';
 
 export function generateStaticParams() {
   const projects = getProjects();
@@ -75,25 +75,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content (2 cols) */}
         <div className="lg:col-span-2 space-y-8">
-            {/* Tabs (Mocked visually) */}
-            <div className="border-b border-slate-200">
-                <nav className="-mb-px flex space-x-8">
-                    <a href="#" className="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                        Overview
-                    </a>
-                    <a href="#" className="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                        Plan & Deliverables
-                    </a>
-                    <a href="#" className="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                        Updates <span className="ml-1 bg-slate-100 text-slate-600 py-0.5 px-2 rounded-full text-xs">0</span>
-                    </a>
-                </nav>
-            </div>
-
-            {/* Markdown Content */}
-            <article className="prose prose-slate max-w-none bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
-                <ReactMarkdown>{project.content}</ReactMarkdown>
-            </article>
+            {/* Project Content Tabs */}
+            <ProjectContent project={project} />
 
         </div>
 

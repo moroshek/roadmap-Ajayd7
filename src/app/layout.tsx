@@ -27,9 +27,8 @@ export default function RootLayout({
             <Sidebar />
             <div className="flex-grow flex flex-col h-screen overflow-hidden">
                  {/* Top Bar */}
-                 <div className="flex-none h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10">
-                    <div className="text-sm font-medium text-slate-500">
-                         {/* Breadcrumbs or Date */}
+                 <div className="flex-none h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between shadow-sm">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                          {today}
                     </div>
                     <div>
