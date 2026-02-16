@@ -26,6 +26,7 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
     const [displayedProjects, setDisplayedProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(false);
+    const loadingRef = useRef(false);
     const loader = useRef(null);
 
     // Filter and Sort Logic
@@ -81,7 +82,8 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
         const observer = new IntersectionObserver((entities) => {
             const target = entities[0];
             // Only trigger if we have more to load and not already loading
-            if (target.isIntersecting && !loading && displayedProjects.length < processedProjects.length) {
+            // Use loadingRef to avoid race conditions
+            if (target.isIntersecting && !loadingRef.current && displayedProjects.length < processedProjects.length) {
                 loadMore();
             }
         }, options);
@@ -93,10 +95,14 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
         return () => {
             if (loader.current) observer.unobserve(loader.current);
         };
-    }, [displayedProjects.length, processedProjects.length, loading]);
+    }, [displayedProjects.length, processedProjects.length]);
 
     const loadMore = () => {
+        if (loadingRef.current) return;
+        
         setLoading(true);
+        loadingRef.current = true;
+        
         // Small timeout to allow user to see loading state
         setTimeout(() => {
             setDisplayedProjects(prev => {
@@ -107,6 +113,7 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
                 return [...prev, ...nextBatch];
             });
             setLoading(false);
+            loadingRef.current = false;
         }, 400);
     };
 
